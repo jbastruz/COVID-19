@@ -141,10 +141,9 @@ stan_fit<- stan(
   warmup = 2000
 )
 
-traceplot(stan_fit,pars=c("a_intercept","b_intercept",
+traceplot(stan_fit,pars=c("b_intercept",
                           "c_intercept","c_a","c_b","c_h",
-                          "a","b",
-                          "sigma_a","sigma_b",
+                          "a","b","sigma_b",
                           "sigma"))
 
 pairs(stan_fit,pars=c("a_intercept","c_intercept","beta_c"))
