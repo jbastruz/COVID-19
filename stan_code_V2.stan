@@ -19,9 +19,9 @@ parameters {
   real<lower=0> sigma_b;
   
   vector<lower=0>[K] c_intercept;
-  vector<lower=0>[K] c_b;
+  vector<upper=0>[K] c_b;
   vector<lower=0>[K] c_a;
-  vector[K] c_h;
+  vector<lower=0>[K] c_h;
   
   //real<lower=0> sigma_c;
 
@@ -68,13 +68,14 @@ target+= cauchy_lpdf(sigma_b|0,25);
 // target+= normal_lpdf(c_intercept|0.1,0.5);
 // target+= cauchy_lpdf(sigma_c|0,1);
 
-target+= normal_lpdf(c_b|0,0.4);
+target+= normal_lpdf(c_intercept|0,1);
+target+= normal_lpdf(c_b|0,1);
 target+= normal_lpdf(c_a[1]|0,5);
-target+= normal_lpdf(c_a[2]|80,10);
-target+= normal_lpdf(c_a[3]|80,10);
-target+= normal_lpdf(c_h[1]|0,0.01);
-target+= normal_lpdf(c_h[2]|0,0.01);
-target+= normal_lpdf(c_h[3]|0,0.01);
+target+= normal_lpdf(c_a[2]|80,20);
+target+= normal_lpdf(c_a[3]|80,20);
+target+= normal_lpdf(c_h[1]|0,10);
+target+= normal_lpdf(c_h[2]|0,10);
+target+= normal_lpdf(c_h[3]|0,10);
 
 // target+= normal_lpdf(c_2[1]*sigma_lockdown|0,1);
 // target+= normal_lpdf(c_2[2]*sigma_tests|0,1);
