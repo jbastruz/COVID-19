@@ -48,7 +48,7 @@ fig %>% subplot(nrows = 3)
 
 ```{r, echo=TRUE, warning = FALSE, out.width = 'auto', fig.height=5, fig.align='center'}
 
-fig = plotList(NbCountryProj)
+fig = plotList(NbCountryProj/4+1)
 fig %>% subplot(nrows = 3)
 
 ```
