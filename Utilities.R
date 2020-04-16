@@ -10,6 +10,9 @@ Packages=c("rstanarm","actuar","rstan","dplyr","lubridate","readxl","ggplot2",
 
 lapply(Packages,library,character.only=TRUE)
 
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+Sys.setenv(LOCAL_CPPFLAGS = '-march=corei7')
 
 plotList <- function(A) {
   lapply(seq_len(A), function(x) {
@@ -29,11 +32,6 @@ plotList <- function(A) {
   }
 )}
 
-options(shiny.maxRequestSize=40*1024^2) 
-
-options(mc.cores = parallel::detectCores())
-rstan_options(auto_write = TRUE)
-Sys.setenv(LOCAL_CPPFLAGS = '-march=corei7')
 
 theme.1 <- theme(axis.line = element_line(size = 3, colour = "grey80"), 
                  axis.text = element_text(size=12),
