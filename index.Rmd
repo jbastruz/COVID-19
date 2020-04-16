@@ -37,7 +37,7 @@ In this article, we propose a probabilistic framework to predict confirmed cases
 
 datatable(tmpdb_1, class = 'cell-border stripe')
 Country = levels(tmpdb_1$Country.Region)
-NbCountryInit = length(levels(as.factor(tmpdb_1$Country.Region)))
+NbCountryInit = length(levels(as.factor(tmpdb_1$Country.Region)))/4+1
 
 fig = plotListInit(NbCountryInit)
 fig %>% subplot(nrows = 3)
