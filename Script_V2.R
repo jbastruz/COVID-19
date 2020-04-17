@@ -56,7 +56,7 @@ tmp$lockdown_delay <- as.numeric(tmp$lockdown)-as.numeric(tmp$firstDate)
 db_level_1 <- confirmedcases_counts %>% 
   group_by(Country.Region,day) %>% 
   summarize(cumcases= sum(cumcases)) %>%  
-  filter(Country.Region %in% c("France","Germany","China")
+  filter(Country.Region %in% c("France","Germany","China","Italy","Spain","Belgium","Austria","Argentina","US")
          )
 
 #"India","South Korea","Taiwan*","Canada","Mexico","Chile","Uruguay","Brazil","Argentina","Luxembourg","Austria","Russia","Portugal",
@@ -76,7 +76,7 @@ db_level_1$Country.Region <- relevel(db_level_1$Country.Region,"China")
 
 
 tmp_2 <- countryinfo %>% 
-  filter(Country.Region %in% c("France","Germany","China")
+  filter(Country.Region %in% c("France","Germany","China","Italy","Spain","Belgium","Austria","Argentina","US")
          )
 
 ordered_names <- data.frame(expand.grid(levels(db_level_1$Country.Region)))
@@ -137,7 +137,7 @@ stan_fit<- stan(
   data=stan_list,
   control = list(adapt_delta=0.9, max_treedepth=10),
   chains=3,
-  iter =6000,
+  iter =4000,
   warmup = 2000
 )
 

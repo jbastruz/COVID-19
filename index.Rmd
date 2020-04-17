@@ -21,17 +21,15 @@ source("Utilities.R")
 load("C:/Users/jeanbaptiste.astruz/OneDrive - ADDACTIS GROUP/Travail/R/PlotPandemic/run_Result_R.RData")
 ```
 
-# Estimation of Confirmed Cases
 
-## Intrduction
+# Introduction
 
-Governments have been taking strict measures to slowdown the COVID-19 pandemic or to "flatten the curve". The main reason is funded on avoiding a shortfall of health care resources while buying time to learn about the disease. In the other hand, current lockdowns are provoking collateral problems, especially in fragile economies, and rising questions about the actual sustainability of the system. In order to make a strategic and progressive reactivation, it is critical to have accurate estimates of the virus growth given the measures taken today.
-In this article, we propose a probabilistic framework to predict the number of confirmed cases, considered as a proxy of the growth intensity of the virus. We include variables that might have a relevant effect on the spread such as the number of days between the lockdown date and the first case arrival, capability of testing and population density. The model structure is based on three parameters: outbreak delay, growth rate and reaching point. Furthermore, the proposed probabilistic framework provides a mathematical architecture to partially-pool national estimates towards the overall common behavior of the pandemic (“borrowing strength” property). It is noteworthy that, given the different dates of arrival of the virus to national territories and the similarities in group of countries, it is possible to measure the impact of public policies in the expected curve of confirmed cases. 
+Governments have been taking strict measures to slowdown the COVID-19 pandemic or to "flatten the curve". The main reason is funded on avoiding a shortfall of health care resources while buying time to learn about the disease. In the other hand, current lockdowns are provoking collateral problems, especially in fragile economies, which concerns about the actual sustainability of the system. \
+Under this context, insurance companies need to have a comprehensive and cross-functional view in order to go in line with public decisions and adapt to the society's reponse. It is critical to constantly evaluate the spread of the virus and assess potential scenarios that may arise during this crisis.\
+With the goal of representing the virus evolution in the following weeks, we propose a dynamic probabilistic framework to estimate the number of confirmed cases in several countries. The structure is based on a Gompertz model whose parameters describe outbreak delay, growth rate and final point. We rely on Bayesian inference that provides a mathematical architecture to 1) Propagate uncertainty from model assumptions to predictions, 2) partially-pool estimates towards the overall common behavior of the pandemic (“borrowing strength” property).
 
-Governments have been taking strict measures to slowdown the COVID-19 pandemic or to “flatten the curve”. The main reason is funded on avoiding a shortfall of health care resources and buy time to fight the disease. In the other hand, lockdowns are provoking collateral problems, especially in fragile economies, and administrations have already started to discuss when these measures will be ended. The question is, when will we witness the results of the previous (some of them, late) decisions? Or, how good are these decisions in order to slowdown the spread?
-In this article, we propose a probabilistic framework to predict confirmed cases given the measures taken by Governments and relevant indicators such as the rate of testing, density of the population and lockdown delay after the first case arrival. The methodology relies on Bayesian inference, which provides a mathematical architecture to partially-pool national estimates towards the overall common behavior of the pandemic (“borrowing strength” property). It is based on parameters of interests such as outbreak delay, explosion rate and reaching point. It is noteworthy that, given the different dates of arrival of the virus to national territories and the similarities among groups of countries, it is possible to provide reasonable estimates while controlling for significant structural differences among populations.
 
-## Data import
+# Data source
 
 ```{r, echo=TRUE, out.width = 'auto', fig.height=5, fig.align='center'}
 
@@ -44,57 +42,57 @@ fig %>% subplot(nrows = 3)
 
 ```
 
-## Projected Estimation
+# Model estimates
 
-```{r, echo=TRUE, warning = FALSE, out.width = 'auto', fig.height=5, fig.align='center'}
+```{r, echo=FALSE, warning = FALSE, out.width = 'auto', fig.height=5, fig.align='center'}
 
 fig = plotList(NbCountryProj)
 fig %>% subplot(nrows = 3)
 
 ```
 
-## Model specification
+<!-- ## Model specification -->
 
-\begin{gather*}
+<!-- \begin{gather*} -->
 
-y_{jt} \sim Lognormal(\mu_{jt},\sigma_{jt})\\
+<!-- y_{jt} \sim Lognormal(\mu_{jt},\sigma_{jt})\\ -->
 
-\mu_{jt}=a_j \text{ } exp ({-b_j \text{ } exp({-c_j\text{ } \times\text{ } t}}))\\
+<!-- \mu_{jt}=a_j \text{ } exp ({-b_j \text{ } exp({-c_j\text{ } \times\text{ } t}}))\\ -->
 
-\sigma_{jt} \sim studentT (5,0,1.5)\\
+<!-- \sigma_{jt} \sim studentT (5,0,1.5)\\ -->
 
-a_j \sim Normal^+(a_{intercept},\sigma_a)\\
+<!-- a_j \sim Normal^+(a_{intercept},\sigma_a)\\ -->
 
-b_j \sim Normal(b_{intercept},\sigma_b)\\
+<!-- b_j \sim Normal(b_{intercept},\sigma_b)\\ -->
 
-c_j \sim Normal(c_{intercept}+ \beta_{lockdown} \times \sigma_{lockdown}+\beta_{density} \times \sigma_{density} + \beta_{tests} \times \sigma_{tests} + \beta_{Density:tests} \times \sigma_{Density:tests},\sigma_c)\\
+<!-- c_j \sim Normal(c_{intercept}+ \beta_{lockdown} \times \sigma_{lockdown}+\beta_{density} \times \sigma_{density} + \beta_{tests} \times \sigma_{tests} + \beta_{Density:tests} \times \sigma_{Density:tests},\sigma_c)\\ -->
 
-a_{intercept} \sim Gamma(3,0.5)\\
+<!-- a_{intercept} \sim Gamma(3,0.5)\\ -->
 
-b_{intercept} \sim Normal^+(5,10)\\
+<!-- b_{intercept} \sim Normal^+(5,10)\\ -->
 
-c_{intercept} \sim Normal^+(0.1,0.5)\\
+<!-- c_{intercept} \sim Normal^+(0.1,0.5)\\ -->
 
-\sigma_a \sim Cauchy^+(0,10)\\
+<!-- \sigma_a \sim Cauchy^+(0,10)\\ -->
 
-\sigma_b \sim Cauchy^+(0,25)\\
+<!-- \sigma_b \sim Cauchy^+(0,25)\\ -->
 
-\sigma_c \sim Cauchy^+(0,1)\\
+<!-- \sigma_c \sim Cauchy^+(0,1)\\ -->
 
-\beta_{lockdown}\sim Normal(0,\sigma_{lockdown})\\
+<!-- \beta_{lockdown}\sim Normal(0,\sigma_{lockdown})\\ -->
 
-\beta_{density}\sim Normal(0,\sigma_{density})\\
+<!-- \beta_{density}\sim Normal(0,\sigma_{density})\\ -->
 
-\beta_{tests}\sim Normal(0,\sigma_{tests})\\
+<!-- \beta_{tests}\sim Normal(0,\sigma_{tests})\\ -->
 
-\beta_{Density:tests}\sim Normal(0,\sigma_{Density:tests})\\
+<!-- \beta_{Density:tests}\sim Normal(0,\sigma_{Density:tests})\\ -->
 
-\sigma_{lockdown}\sim Cauchy^+(0,10)\\
+<!-- \sigma_{lockdown}\sim Cauchy^+(0,10)\\ -->
 
-\sigma_{density}\sim Cauchy^+(0,30)\\
+<!-- \sigma_{density}\sim Cauchy^+(0,30)\\ -->
 
-\sigma_{tests}\sim Cauchy^+(0,20)\\
+<!-- \sigma_{tests}\sim Cauchy^+(0,20)\\ -->
 
-\sigma_{Density:tests})\sim Cauchy^+(0,50)\\
+<!-- \sigma_{Density:tests})\sim Cauchy^+(0,50)\\ -->
 
-\end{gather*}
+<!-- \end{gather*} -->
