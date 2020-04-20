@@ -26,10 +26,11 @@ load("C:/Users/jeanbaptiste.astruz/OneDrive - ADDACTIS GROUP/Travail/R/PlotPande
 
 Governments have been taking strict measures to slowdown the COVID-19 pandemic or to "flatten the curve". The main reason is funded on avoiding a shortfall of health care resources while buying time to learn about the disease. In the other hand, current lockdowns are provoking collateral problems, especially in fragile economies, which concerns about the actual sustainability of the system. \
 Under this context, insurance companies need to have a comprehensive and cross-functional view in order to go in line with public decisions and adapt to the society's reponse. It is critical to constantly evaluate the spread of the virus and assess potential scenarios that may arise during this crisis.\
-With the goal of representing the virus evolution in the following weeks, we propose a dynamic probabilistic framework to estimate the number of confirmed cases in several countries. The structure is based on a Gompertz model whose parameters describe outbreak delay, growth rate and final point. We rely on Bayesian inference that provides a mathematical architecture to 1) Propagate uncertainty from model assumptions to predictions, 2) partially-pool estimates towards the overall common behavior of the pandemic (“borrowing strength” property).
-
+With the goal of representing the virus evolution in the following weeks, we propose a dynamic probabilistic framework to estimate the number of confirmed cases in several countries. The structure is based on a Gompertz model whose parameters describe outbreak delay, growth rate and final point. We rely on Bayesian inference that provides a mathematical architecture to 1) propagate uncertainty from model assumptions to predictions, 2) partially-pool estimates towards a common clusterized behavior of the pandemic (“borrowing strength” property).\
+(Some conclusion bla bla)
 
 # Data source
+(Italics) Extrated from bla bla...
 
 ```{r, echo=TRUE, out.width = 'auto', fig.height=5, fig.align='center'}
 
@@ -43,6 +44,7 @@ fig %>% subplot(nrows = 3)
 ```
 
 # Model estimates
+(5 clusters - 5 plots)
 
 ```{r, echo=FALSE, warning = FALSE, out.width = 'auto', fig.height=5, fig.align='center'}
 
@@ -51,48 +53,52 @@ fig %>% subplot(nrows = 3)
 
 ```
 
-<!-- ## Model specification -->
+## Model specification
 
-<!-- \begin{gather*} -->
+The previous figures are based on the model specification developed in this subsection. Let $y_{tj}$ be the cumulative number of confirmed cases for time $t$ and country $j$. We assume that $y_{tj}$ is Lognormal distributed
 
-<!-- y_{jt} \sim Lognormal(\mu_{jt},\sigma_{jt})\\ -->
+$$
+y_{jt} \sim Lognormal(\mu_{jt},\sigma)\\
+$$
+where $\mu_{tj}$ and $\sigma$ are the mean and standard deviation of the associated normal, respectively. The residual error $\sigma$ does not depend on the country. The latter, in a hierarchical model structure, is understood as the within-group residual variability. In this context, it can be originated by different intensities of social distancing measures, different capabilities of governments to stop the spread or spatial/demographic variation across populations, among others. Based on these factors and using demographic proxy variables, we defined a set of clusters of countries that share common attributes (see subsection 1.3).\
+Under the Gompertz model, $\mu_{tj}$ is defined as
 
-<!-- \mu_{jt}=a_j \text{ } exp ({-b_j \text{ } exp({-c_j\text{ } \times\text{ } t}}))\\ -->
+$$
+\mu_{jt}=a_j \text{ } exp ({-b_j \times exp({-c_{tj} \times t}}))\\
+$$
+where $j$ represents the country, $a_j$ represents the reaching point, $b_j$ the delay of the virus to start spreading, $c_{tj}$ the growth rate on time $t$. In order to address the dynamics of the curve changes, we introduced a time-based $c_{tj}$.\
 
-<!-- \sigma_{jt} \sim studentT (5,0,1.5)\\ -->
+$$
+c_{jlt} = \frac{c_{jl}}{h_{jl} + exp(-g_{jl} \times (t - k_{jl}))}
+$$
 
-<!-- a_j \sim Normal^+(a_{intercept},\sigma_a)\\ -->
+where $c_j$, $h_j$ and $g_j$ are pulled towards the cluster mean and $k_j$ has its own mean for country $j$. The b-parameter in equation (1) has the form $b_j= b_{China} + \beta_j \times \sigma_b$.\
+Thus, the prior distributions of all model parameters are the following
 
-<!-- b_j \sim Normal(b_{intercept},\sigma_b)\\ -->
+$$
+\sigma_{jt} \sim Normal^+(0,10)\\
 
-<!-- c_j \sim Normal(c_{intercept}+ \beta_{lockdown} \times \sigma_{lockdown}+\beta_{density} \times \sigma_{density} + \beta_{tests} \times \sigma_{tests} + \beta_{Density:tests} \times \sigma_{Density:tests},\sigma_c)\\ -->
+a_j \sim Normal^+(11,5)\\
 
-<!-- a_{intercept} \sim Gamma(3,0.5)\\ -->
+b_{China} \sim Normal^+(5,10)\\
 
-<!-- b_{intercept} \sim Normal^+(5,10)\\ -->
+\beta_j \sim Normal^+(0,1)\\
 
-<!-- c_{intercept} \sim Normal^+(0.1,0.5)\\ -->
+\sigma_b \sim Cauchy^+(0,25)\\
 
-<!-- \sigma_a \sim Cauchy^+(0,10)\\ -->
+c_{jl} \sim Normal(\gamma_l,\sigma_c)\\
 
-<!-- \sigma_b \sim Cauchy^+(0,25)\\ -->
+h_{jl} \sim Normal(\theta_l,\sigma_c)\\
 
-<!-- \sigma_c \sim Cauchy^+(0,1)\\ -->
+g_{jl} \sim Normal(\alpha_l,\sigma_c)\\
 
-<!-- \beta_{lockdown}\sim Normal(0,\sigma_{lockdown})\\ -->
+k_{jl} \sim Normal(70,70)\\
 
-<!-- \beta_{density}\sim Normal(0,\sigma_{density})\\ -->
+\gamma_l \sim Normal^+(0,1)\\
 
-<!-- \beta_{tests}\sim Normal(0,\sigma_{tests})\\ -->
+\theta_l \sim Normal^+(0,10)\\
 
-<!-- \beta_{Density:tests}\sim Normal(0,\sigma_{Density:tests})\\ -->
+\alpha_l \sim Normal^+(0,0.5)
 
-<!-- \sigma_{lockdown}\sim Cauchy^+(0,10)\\ -->
-
-<!-- \sigma_{density}\sim Cauchy^+(0,30)\\ -->
-
-<!-- \sigma_{tests}\sim Cauchy^+(0,20)\\ -->
-
-<!-- \sigma_{Density:tests})\sim Cauchy^+(0,50)\\ -->
-
-<!-- \end{gather*} -->
+$$
+where $j=1,...,J$ represents the country, $l=1,...,L$ represents the cluster for country $j$. The hierarchical structure is introduced through $c_{jl}$, $h_{jl}$ and $g_{jl}$, i.e., country $j$ shares information with the cluster through $\gamma_l$,$\theta_l$ and $\alpha_l$. It is interesting to recover $P(\gamma_l \mid y)$ to analyze the efficiency of similar decisions at group level. 

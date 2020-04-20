@@ -18,46 +18,59 @@ death_counts[death_counts$Country.Region=="Korea, South",c("Country.Region")] <-
 
 confirmedcases_counts$day <- as.numeric(as.Date(confirmedcases_counts$Date))-min(as.numeric(as.Date(confirmedcases_counts$Date)))+1
 death_counts$day <- as.numeric(as.Date(death_counts$Date))-min(as.numeric(as.Date(death_counts$Date)))+1
+# 
+# tmp <- left_join(confirmedcases_counts %>% 
+#                    group_by(Country.Region,date(Date)) %>% 
+#                    filter(Value!=0) %>% 
+#                    group_by(Country.Region) %>% 
+#                    summarize(firstDate=min(date(Date)),
+#                              firstDay=min(day)),
+#                  countryinfo)
+# 
+# tmp$lockdown <- as.Date(max(date(confirmedcases_counts$Date)))
+# 
+# tmp[tmp$Country.Region=="Italy",c("lockdown")] <- as.Date("2020/03/09")
+# tmp[tmp$Country.Region=="Spain",c("lockdown")] <- as.Date("2020/03/14")
+# tmp[tmp$Country.Region=="France",c("lockdown")] <- as.Date("2020/03/17")
+# tmp[tmp$Country.Region=="Germany",c("lockdown")] <- as.Date("2020/03/22")
+# tmp[tmp$Country.Region=="United Kingdom",c("lockdown")] <- as.Date("2020/03/23")
+# tmp[tmp$Country.Region=="Austria",c("lockdown")] <- as.Date("2020/03/16")
+# tmp[tmp$Country.Region=="Belgium",c("lockdown")] <- as.Date("2020/03/18")
+# tmp[tmp$Country.Region=="Portugal",c("lockdown")] <- as.Date("2020/03/19")
+# tmp[tmp$Country.Region=="China",c("lockdown")] <-as.Date("2020/01/23")
+# tmp[tmp$Country.Region=="US",c("lockdown")] <- as.Date("2020/03/22")
+# tmp[tmp$Country.Region=="India",c("lockdown")] <- as.Date("2020/03/24")
+# tmp[tmp$Country.Region=="Argentina",c("lockdown")] <- as.Date("2020/03/20")
+# # tmp[tmp$Country.Region=="Luxembourg",c("lockdown")] <- as.Date("2020/03/19")
+# # tmp[tmp$Country.Region=="Canada",c("lockdown")] <- as.Date("2020/03/19")
+# # tmp[tmp$Country.Region=="Mexico",c("lockdown")] <- as.Date("2020/03/31")
+# # tmp[tmp$Country.Region=="Chile",c("lockdown")] <- as.Date("2020/03/23")
+# # tmp[tmp$Country.Region=="Uruguay",c("lockdown")] <- as.Date("2020/03/22")
+# # tmp[tmp$Country.Region=="Brazil",c("lockdown")] <- as.Date("2020/03/23")
+# # tmp[tmp$Country.Region=="Russia",c("lockdown")] <- as.Date("2020/03/10")
+# # tmp[tmp$Country.Region=="Taiwan*",c("lockdown")] <- as.Date("2020/03/3")
+# # tmp[tmp$Country.Region=="Vietnam",c("lockdown")] <- as.Date("2020/03/5")
+# 
+# tmp$lockdown_delay <- as.numeric(tmp$lockdown)-as.numeric(tmp$firstDate)
 
-tmp <- left_join(confirmedcases_counts %>% 
-                   group_by(Country.Region,date(Date)) %>% 
-                   filter(Value!=0) %>% 
-                   group_by(Country.Region) %>% 
-                   summarize(firstDate=min(date(Date)),
-                             firstDay=min(day)),
-                 countryinfo)
-
-tmp$lockdown <- as.Date(max(date(confirmedcases_counts$Date)))
-
-tmp[tmp$Country.Region=="Italy",c("lockdown")] <- as.Date("2020/03/09")
-tmp[tmp$Country.Region=="Spain",c("lockdown")] <- as.Date("2020/03/14")
-tmp[tmp$Country.Region=="France",c("lockdown")] <- as.Date("2020/03/17")
-tmp[tmp$Country.Region=="Germany",c("lockdown")] <- as.Date("2020/03/22")
-tmp[tmp$Country.Region=="United Kingdom",c("lockdown")] <- as.Date("2020/03/23")
-tmp[tmp$Country.Region=="Austria",c("lockdown")] <- as.Date("2020/03/16")
-tmp[tmp$Country.Region=="Belgium",c("lockdown")] <- as.Date("2020/03/18")
-tmp[tmp$Country.Region=="Portugal",c("lockdown")] <- as.Date("2020/03/19")
-tmp[tmp$Country.Region=="China",c("lockdown")] <-as.Date("2020/01/23")
-tmp[tmp$Country.Region=="US",c("lockdown")] <- as.Date("2020/03/22")
-tmp[tmp$Country.Region=="India",c("lockdown")] <- as.Date("2020/03/24")
-tmp[tmp$Country.Region=="Argentina",c("lockdown")] <- as.Date("2020/03/20")
-# tmp[tmp$Country.Region=="Luxembourg",c("lockdown")] <- as.Date("2020/03/19")
-# tmp[tmp$Country.Region=="Canada",c("lockdown")] <- as.Date("2020/03/19")
-# tmp[tmp$Country.Region=="Mexico",c("lockdown")] <- as.Date("2020/03/31")
-# tmp[tmp$Country.Region=="Chile",c("lockdown")] <- as.Date("2020/03/23")
-# tmp[tmp$Country.Region=="Uruguay",c("lockdown")] <- as.Date("2020/03/22")
-# tmp[tmp$Country.Region=="Brazil",c("lockdown")] <- as.Date("2020/03/23")
-# tmp[tmp$Country.Region=="Russia",c("lockdown")] <- as.Date("2020/03/10")
-# tmp[tmp$Country.Region=="Taiwan*",c("lockdown")] <- as.Date("2020/03/3")
-# tmp[tmp$Country.Region=="Vietnam",c("lockdown")] <- as.Date("2020/03/5")
-
-tmp$lockdown_delay <- as.numeric(tmp$lockdown)-as.numeric(tmp$firstDate)
+# db_level_1 <- confirmedcases_counts %>% 
+#   group_by(Country.Region,day) %>% 
+#   summarize(cumcases= sum(cumcases)) %>%  
+#   filter(Country.Region %in% c("US","France","United Kingdom","Turkey","Iran",
+#                                "Italy","Germany","Finland","Switzerland","Portugal","Denmark","Norway","Austria","Luxembourg",
+#                                "Russia","Sweden","Spain","Indonesia","Belgium","Canada","Netherlands",
+#                                "China","South Korea","Vietnam","Iceland","Argentina","Australia","New Zealand",
+#                                "Brazil","India","Peru","Singapore","United Arab Emirates","Chile"
+#                                )
+#          )
 
 db_level_1 <- confirmedcases_counts %>% 
   group_by(Country.Region,day) %>% 
   summarize(cumcases= sum(cumcases)) %>%  
-  filter(Country.Region %in% c("France","Germany","China","Italy","Spain","Belgium","Austria","Argentina","US")
-         )
+  filter(Country.Region %in% c("US","France","United Kingdom","Turkey","Iran",
+                               "China","South Korea","Vietnam","Iceland","Argentina","Australia","New Zealand"
+  )
+  )
 
 #"India","South Korea","Taiwan*","Canada","Mexico","Chile","Uruguay","Brazil","Argentina","Luxembourg","Austria","Russia","Portugal",
 # c("China",
@@ -75,9 +88,20 @@ db_level_1$Country.Region <- as.factor(db_level_1$Country.Region)
 db_level_1$Country.Region <- relevel(db_level_1$Country.Region,"China")
 
 
+# tmp_2 <- countryinfo %>% 
+#   filter(Country.Region %in% c("US","France","United Kingdom","Turkey","Iran",
+#                                "Italy","Germany","Finland","Switzerland","Portugal","Denmark","Norway","Austria","Luxembourg",
+#                                "Russia","Sweden","Spain","Indonesia","Belgium","Canada","Netherlands",
+#                                "China","South Korea","Vietnam","Iceland","Argentina","Australia","New Zealand",
+#                                "Brazil","India","Peru","Singapore","United Arab Emirates","Chile"
+#   )
+#   )
+
 tmp_2 <- countryinfo %>% 
-  filter(Country.Region %in% c("France","Germany","China","Italy","Spain","Belgium","Austria","Argentina","US")
-         )
+  filter(Country.Region %in% c("US","France","United Kingdom","Turkey","Iran",
+                               "China","South Korea","Vietnam","Iceland","Argentina","Australia","New Zealand"
+  )
+  )
 
 ordered_names <- data.frame(expand.grid(levels(db_level_1$Country.Region)))
 colnames(ordered_names) <- "Country.Region"
@@ -86,6 +110,14 @@ db_level_2 <- left_join(ordered_names,tmp_2)
 
 db_level_2 <- left_join(db_level_2,tmp[,c(1,21)])
 
+db_level_2$Group <- NA
+
+db_level_2[db_level_2$Country.Region %in% c("US","France","United Kingdom","Turkey","Iran"),"Group"] <- 1
+db_level_2[db_level_2$Country.Region %in% c("Italy","Germany","Finland","Switzerland","Portugal","Denmark","Norway","Austria","Luxembourg"),"Group"] <- 2
+db_level_2[db_level_2$Country.Region %in% c("Russia","Sweden","Spain","Indonesia","Belgium","Canada","Netherlands"),"Group"] <- 3
+db_level_2[db_level_2$Country.Region %in% c("China","South Korea","Vietnam","Iceland","Argentina","Australia","New Zealand"),"Group"] <- 4
+db_level_2[db_level_2$Country.Region %in% c("Brazil","India","Peru","Singapore","United Arab Emirates","Chile"),"Group"] <- 5
+
 ndaysproj=10
 
 yproj <- expand.grid(Country.Region=levels(db_level_1$Country.Region),
@@ -93,14 +125,9 @@ yproj <- expand.grid(Country.Region=levels(db_level_1$Country.Region),
 
 design_matrix_1 <- model.matrix(~-1+Country.Region,db_level_1);colnames(design_matrix_1);dim(design_matrix_1)
 
-design_matrix_b <- model.matrix(~-1+Country.Region,db_level_1)[,-1];colnames(design_matrix_b);dim(design_matrix_b)
+design_matrix_2 <- model.matrix(~-1+as.factor(Group),db_level_2);colnames(design_matrix_2);dim(design_matrix_2)
 
-design_matrix_level_2 <- model.matrix(~ -1 + as.numeric(lockdown_delay)+
-                                        as.numeric(TestsOver1mPop)+
-                                        as.numeric(Density)+
-                                        Group+
-                                        as.numeric(Urbanpop),
-                                      db_level_2);colnames(design_matrix_level_2);dim(design_matrix_level_2)
+design_matrix_b <- model.matrix(~-1+Country.Region,db_level_1)[,-1];colnames(design_matrix_b);dim(design_matrix_b)
 
 design_matrix_proj <- model.matrix(~-1+Country.Region,yproj);colnames(design_matrix_proj);dim(design_matrix_proj)
 
@@ -108,23 +135,25 @@ design_matrix_b_proj <- model.matrix(~-1+Country.Region,yproj)[,-1];colnames(des
 
 db_level_1$cumcases <- db_level_1$cumcases+1
 
-stan_list <- list("y"=db_level_1$cumcases,
-                  "N"=length(db_level_1$cumcases),
-                  "K"=dim(design_matrix_1)[2],
-                  "K_c"=dim(design_matrix_level_2)[2],
-                  "design_matrix_1"=design_matrix_1,
-                  "design_matrix_b"=design_matrix_b,
-                  "design_matrix_level_2"=design_matrix_level_2,
-                  "design_matrix_proj"=design_matrix_proj,
-                  "design_matrix_b_proj"=design_matrix_b_proj,
-                  "M"=length(yproj$Country.Region),
-                  "day"=db_level_1$day,
-                  "day_projected"=yproj$day)
+# stan_list <- list("y"=db_level_1$cumcases,
+#                   "N"=length(db_level_1$cumcases),
+#                   "K"=dim(design_matrix_1)[2],
+#                   "K_c"=dim(design_matrix_level_2)[2],
+#                   "design_matrix_1"=design_matrix_1,
+#                   "design_matrix_b"=design_matrix_b,
+#                   "design_matrix_level_2"=design_matrix_level_2,
+#                   "design_matrix_proj"=design_matrix_proj,
+#                   "design_matrix_b_proj"=design_matrix_b_proj,
+#                   "M"=length(yproj$Country.Region),
+#                   "day"=db_level_1$day,
+#                   "day_projected"=yproj$day)
 
 stan_list <- list("y"=db_level_1$cumcases,
                   "N"=length(db_level_1$cumcases),
-                  "K"=dim(design_matrix_1)[2],
+                  "J"=dim(design_matrix_1)[2],
+                  "L"=dim(design_matrix_2)[2],
                   "design_matrix_1"=design_matrix_1,
+                  "design_matrix_2"=design_matrix_2,
                   "design_matrix_b"=design_matrix_b,
                   "design_matrix_proj"=design_matrix_proj,
                   "design_matrix_b_proj"=design_matrix_b_proj,
@@ -142,9 +171,7 @@ stan_fit<- stan(
 )
 
 
-traceplot(stan_fit,pars=c("c_intercept","c_a","c_b","c_h",
-                          "a","b","sigma_b","b_intercept",
-                          "sigma"))
+traceplot(stan_fit,pars=c("c_intercept","c_a","c_b","c_h"))
 
 pairs(stan_fit,pars=c("a_intercept","c_intercept","beta_c"))
 
@@ -173,6 +200,14 @@ colnames(ppc_summary_yproj) =
 ppc_summary_yproj$model <- "yproj"
 
 ppc_summary <- rbind(ppc_summary_yrep,ppc_summary_yproj)
+
+plotdata <- data.frame(Country.Region=c(as.character(db_level_1$Country.Region),as.character(yproj$Country.Region)),
+                       day=c(db_level_1$day,yproj$day),
+                       cumcases=c(db_level_1$cumcases,rep(NA,length(yproj$day))),
+                       Y_pred_median=round(ppc_summary$Y_pred_median,0),
+                       Y_pred_cred_0.025=round(ppc_summary$Y_pred_cred_0.025,0),
+                       Y_pred_cred_0.975=round(ppc_summary$Y_pred_cred_0.975),0)
+write.csv(plotdata,file="plotdata.csv")
 
 c2 = data.frame(rstan::extract(stan_fit,par = "c_2"))
 a = data.frame(rstan::extract(stan_fit,par = "a"))
