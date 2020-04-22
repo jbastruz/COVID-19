@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>4 Model Specifications | Modeling the COVID-19 spread</title>
+  <meta name="description" content="A nice presentation to show our results about COVID-19 confirmed cases estimation" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="4 Model Specifications | Modeling the COVID-19 spread" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="A nice presentation to show our results about COVID-19 confirmed cases estimation" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="4 Model Specifications | Modeling the COVID-19 spread" />
+  
+  <meta name="twitter:description" content="A nice presentation to show our results about COVID-19 confirmed cases estimation" />
+  
+
+<meta name="author" content="Juan Ignacio de Oyarbide &amp; Jean-Baptiste Astruz" />
+
+
+<meta name="date" content="2020-06-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="model-estimations.html"/>
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.13/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+<script src="libs/plotly-binding-4.9.2.1/plotly.js"></script>
+<script src="libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="libs/plotly-htmlwidgets-css-1.52.2/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="libs/plotly-main-1.52.2/plotly-latest.min.js"></script>
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./"><CENTER>Modeling the COVID-19 spread</CENTER></a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="data-source.html"><a href="data-source.html"><i class="fa fa-check"></i><b>2</b> Data source</a></li>
+<li class="chapter" data-level="3" data-path="model-estimations.html"><a href="model-estimations.html"><i class="fa fa-check"></i><b>3</b> Model Estimations</a></li>
+<li class="chapter" data-level="4" data-path="model-specifications.html"><a href="model-specifications.html"><i class="fa fa-check"></i><b>4</b> Model Specifications</a></li>
+<li class="divider"></li>
+<li><CENTER>Written by <br>
+Juan Ignacio de Oyarbide & <br>
+Jean-Baptiste Astruz </CENTER></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Modeling the COVID-19 spread</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="model-specifications" class="section level1">
+<h1><span class="header-section-number">4</span> Model Specifications</h1>
+<p>The previous figures are based on the model specification developed in this subsection. Let <span class="math inline">\(y_{tj}\)</span> be the cumulative number of confirmed cases for time <span class="math inline">\(t\)</span> and country <span class="math inline">\(j\)</span>. We assume that <span class="math inline">\(y_{tj}\)</span> is Lognormal distributed</p>
+<p><span class="math display">\[
+y_{jt} \sim Lognormal(\mu_{jt},\sigma)\\
+\]</span>
+where <span class="math inline">\(\mu_{tj}\)</span> and <span class="math inline">\(\sigma\)</span> are the mean and standard deviation of the associated normal, respectively. The residual error <span class="math inline">\(\sigma\)</span> does not depend on the country. The latter, in a hierarchical model structure, is understood as the within-group residual variability. In this context, it can be originated by different intensities of social distancing measures, different capabilities of governments to stop the spread or spatial/demographic variation across populations, among others. Based on these factors and using demographic proxy variables, we defined a set of clusters of countries that share common attributes (see subsection 1.3).<br />
+Under the Gompertz model, <span class="math inline">\(\mu_{tj}\)</span> is defined as</p>
+<p><span class="math display">\[
+\mu_{jt}=a_j \text{ } exp ({-b_j \times exp({-c_{tj} \times t}}))\\
+\]</span>
+where <span class="math inline">\(j\)</span> represents the country, <span class="math inline">\(a_j\)</span> represents the reaching point, <span class="math inline">\(b_j\)</span> the delay of the virus to start spreading, <span class="math inline">\(c_{tj}\)</span> the growth rate on time <span class="math inline">\(t\)</span>. In order to address the dynamics of the curve changes, we introduced a time-based <span class="math inline">\(c_{tj}\)</span>.<br />
+</p>
+<p><span class="math display">\[
+c_{jlt} = \frac{c_{jl}}{h_{jl} + exp(-g_{jl} \times (t - k_{jl}))}
+\]</span></p>
+<p>where <span class="math inline">\(c_j\)</span>, <span class="math inline">\(h_j\)</span> and <span class="math inline">\(g_j\)</span> are pulled towards the cluster mean and <span class="math inline">\(k_j\)</span> has its own mean for country <span class="math inline">\(j\)</span>. The b-parameter in equation (1) has the form <span class="math inline">\(b_j= b_{China} + \beta_j \times \sigma_b\)</span>.<br />
+Thus, the prior distributions of all model parameters are the following</p>
+<p><span class="math display">\[\begin{gather*}
+
+\sigma_{jt} \sim Normal^+(0,10)\\
+
+a_j \sim Normal^+(11,5)\\
+
+b_{China} \sim Normal^+(5,10)\\
+
+\beta_j \sim Normal^+(0,1)\\
+
+\sigma_b \sim Cauchy^+(0,25)\\
+
+c_{jl} \sim Normal(\gamma_l,\sigma_c)\\
+
+h_{jl} \sim Normal(\theta_l,\sigma_c)\\
+
+g_{jl} \sim Normal(\alpha_l,\sigma_c)\\
+
+k_{jl} \sim Normal(70,70)\\
+
+\gamma_l \sim Normal^+(0,1)\\
+
+\theta_l \sim Normal^+(0,10)\\
+
+\alpha_l \sim Normal^+(0,0.5)\\
+
+\end{gather*}\]</span></p>
+<p>where <span class="math inline">\(j=1,...,J\)</span> represents the country, <span class="math inline">\(l=1,...,L\)</span> represents the cluster for country <span class="math inline">\(j\)</span>. The hierarchical structure is introduced through <span class="math inline">\(c_{jl}\)</span>, <span class="math inline">\(h_{jl}\)</span> and <span class="math inline">\(g_{jl}\)</span>, i.e., country <span class="math inline">\(j\)</span> shares information with the cluster through <span class="math inline">\(\gamma_l\)</span>,<span class="math inline">\(\theta_l\)</span> and <span class="math inline">\(\alpha_l\)</span>. It is interesting to recover <span class="math inline">\(P(\gamma_l \mid y)\)</span> to analyze the efficiency of similar decisions at group level.</p>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="model-estimations.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["COVID-19.pdf", "COVID-19.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

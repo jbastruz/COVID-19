@@ -1,12 +1,15 @@
 --- 
-title: "COVID 19 - a Bayesian Modeling"
+title: "Modeling the COVID-19 spread"
 author: "Juan Ignacio de Oyarbide & Jean-Baptiste Astruz"
 date: "06/04/2020"
-documentclass: book
+output: 
+  bookdown::gitbook:
+    split_by: none
 link-citations: yes
-site: bookdown::bookdown_site
-description: "A nice presentation to show our results about COVID-19 confirmed cases
-  estimation"
+documentclass: book
+description: A nice presentation to show our results about COVID-19 confirmed cases
+  estimation
+site: bookdown::book
 ---
 
 ```{r, setup, include=FALSE, eval=TRUE}
@@ -18,83 +21,146 @@ library(treemap)
 library(flexdashboard)
 knitr::opts_chunk$set(echo = FALSE)
 source("Utilities.R")
-load("C:/Users/jeanbaptiste.astruz/OneDrive - ADDACTIS GROUP/Travail/R/PlotPandemic/run_Result_R.RData")
+load("C:/Users/jeanbaptiste.astruz/Documents/GitHub/COVID-19/run_Result_R_V2.RData")
 ```
 
-# Estimation of Confirmed Cases
+# Introduction
 
-## Intrduction
+Governments have been taking strict measures to slowdown the COVID-19 pandemic or to "flatten the curve". The main reason is funded on avoiding a shortfall of health care resources while buying time to learn about the disease. In the other hand, current lockdowns are provoking collateral problems, especially in fragile economies, which concerns about the actual sustainability of the system. \
+Under this context, insurance companies need to have a comprehensive and cross-functional view in order to go in line with public decisions and adapt to the society's reponse. It is critical to constantly evaluate the spread of the virus and assess potential scenarios that may arise during this crisis.\
+With the goal of representing the virus evolution in the following weeks, we propose a dynamic probabilistic framework to estimate the number of confirmed cases in several countries. The structure is based on a Gompertz model whose parameters describe outbreak delay, growth rate and final point. We rely on Bayesian inference that provides a mathematical architecture to 1) propagate uncertainty from model assumptions to predictions, 2) partially-pool estimates towards a common clusterized behavior of the pandemic (“borrowing strength” property).\
+(Some conclusion bla bla)
 
-Governments have been taking strict measures to slowdown the COVID-19 pandemic or to "flatten the curve". The main reason is funded on avoiding a shortfall of health care resources while buying time to learn about the disease. In the other hand, current lockdowns are provoking collateral problems, especially in fragile economies, and rising questions about the actual sustainability of the system. In order to make a strategic and progressive reactivation, it is critical to have accurate estimates of the virus growth given the measures taken today.
-In this article, we propose a probabilistic framework to predict the number of confirmed cases, considered as a proxy of the growth intensity of the virus. We include variables that might have a relevant effect on the spread such as the number of days between the lockdown date and the first case arrival, capability of testing and population density. The model structure is based on three parameters: outbreak delay, growth rate and reaching point. Furthermore, the proposed probabilistic framework provides a mathematical architecture to partially-pool national estimates towards the overall common behavior of the pandemic (“borrowing strength” property). It is noteworthy that, given the different dates of arrival of the virus to national territories and the similarities in group of countries, it is possible to measure the impact of public policies in the expected curve of confirmed cases. 
+# Data source
 
-Governments have been taking strict measures to slowdown the COVID-19 pandemic or to “flatten the curve”. The main reason is funded on avoiding a shortfall of health care resources and buy time to fight the disease. In the other hand, lockdowns are provoking collateral problems, especially in fragile economies, and administrations have already started to discuss when these measures will be ended. The question is, when will we witness the results of the previous (some of them, late) decisions? Or, how good are these decisions in order to slowdown the spread?
-In this article, we propose a probabilistic framework to predict confirmed cases given the measures taken by Governments and relevant indicators such as the rate of testing, density of the population and lockdown delay after the first case arrival. The methodology relies on Bayesian inference, which provides a mathematical architecture to partially-pool national estimates towards the overall common behavior of the pandemic (“borrowing strength” property). It is based on parameters of interests such as outbreak delay, explosion rate and reaching point. It is noteworthy that, given the different dates of arrival of the virus to national territories and the similarities among groups of countries, it is possible to provide reasonable estimates while controlling for significant structural differences among populations.
+(blabla to add)
 
-## Data import
+<!--- <strong><CENTER>Global Data Per Country</CENTER></strong>
 
-```{r, echo=TRUE, out.width = 'auto', fig.height=5, fig.align='center'}
+```{r, echo=FALSE, out.width = 'auto', fig.height=5, fig.align='center'}
 
-datatable(tmpdb_1, class = 'cell-border stripe')
-Country = levels(tmpdb_1$Country.Region)
-NbCountryInit = length(levels(as.factor(tmpdb_1$Country.Region)))
+datatable(db_level_2, class = 'cell-border stripe')
+Country = levels(as.factor(db_level_1$Country.Region))
+NbCountryInit = length(levels(as.factor(db_level_1$Country.Region)))
 
-fig = plotListInit(NbCountryInit)
+```
+sources : [JHU CSSE	- Johns Hopkins School of Public Health](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases "time_series_covid19_deaths_global.csv")
+--->
+<strong><CENTER>Confirmed Cases</CENTER></strong>
+```{r, echo=FALSE, out.width = 'auto', fig.height=5, fig.align='center'}
+
+datatable(db_level_1, class = 'cell-border stripe')
+Country = levels(as.factor(db_level_1$Country.Region))
+NbCountryInit = length(levels(as.factor(db_level_1$Country.Region)))
+
+```
+sources : [JHU CSSE	- Johns Hopkins School of Public Health](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases "time_series_covid19_confirmed_global.csv")
+
+# Model Estimations
+
+<strong><CENTER>Estimation of the evolution of the Sars-Cov-2</CENTER></strong>
+
+<strong><CENTER>Cluster 1</CENTER></strong>
+
+```{r, echo=FALSE, warning = FALSE, out.width = 'auto', fig.height=5, fig.align='center'}
+
+fig = plotList(NbCountryInit, plotdata)
+fig %>% subplot(nrows = 3)
+
+```
+\
+\
+\
+<strong><CENTER>Cluster 2</CENTER></strong>
+
+```{r, echo=FALSE, warning = FALSE, out.width = 'auto', fig.height=5, fig.align='center'}
+
+fig = plotList(NbCountryInit, plotdata)
+fig %>% subplot(nrows = 3)
+
+```
+\
+\
+\
+<strong><CENTER>Cluster 3</CENTER></strong>
+
+```{r, echo=FALSE, warning = FALSE, out.width = 'auto', fig.height=5, fig.align='center'}
+
+fig = plotList(NbCountryInit, plotdata)
+fig %>% subplot(nrows = 3)
+
+```
+\
+\
+\
+<strong><CENTER>Cluster 4</CENTER></strong>
+
+```{r, echo=FALSE, warning = FALSE, out.width = 'auto', fig.height=5, fig.align='center'}
+
+fig = plotList(NbCountryInit, plotdata)
+fig %>% subplot(nrows = 3)
+
+```
+\
+\
+\
+<strong><CENTER>Cluster 5</CENTER></strong>
+
+```{r, echo=FALSE, warning = FALSE, out.width = 'auto', fig.height=5, fig.align='center'}
+
+fig = plotList(NbCountryInit, plotdata)
 fig %>% subplot(nrows = 3)
 
 ```
 
-## Projected Estimation
+# Model Specifications
 
-```{r, echo=TRUE, warning = FALSE, out.width = 'auto', fig.height=5, fig.align='center'}
+The previous figures are based on the model specification developed in this subsection. Let $y_{tj}$ be the cumulative number of confirmed cases for time $t$ and country $j$. We assume that $y_{tj}$ is Lognormal distributed
 
-fig = plotList(NbCountryProj)
-fig %>% subplot(nrows = 3)
+$$
+y_{jt} \sim Lognormal(\mu_{jt},\sigma)\\
+$$
+where $\mu_{tj}$ and $\sigma$ are the mean and standard deviation of the associated normal, respectively. The residual error $\sigma$ does not depend on the country. The latter, in a hierarchical model structure, is understood as the within-group residual variability. In this context, it can be originated by different intensities of social distancing measures, different capabilities of governments to stop the spread or spatial/demographic variation across populations, among others. Based on these factors and using demographic proxy variables, we defined a set of clusters of countries that share common attributes (see subsection 1.3).\
+Under the Gompertz model, $\mu_{tj}$ is defined as
 
-```
+$$
+\mu_{jt}=a_j \text{ } exp ({-b_j \times exp({-c_{tj} \times t}}))\\
+$$
+where $j$ represents the country, $a_j$ represents the reaching point, $b_j$ the delay of the virus to start spreading, $c_{tj}$ the growth rate on time $t$. In order to address the dynamics of the curve changes, we introduced a time-based $c_{tj}$.\
 
-## Model specification
+$$
+c_{jlt} = \frac{c_{jl}}{h_{jl} + exp(-g_{jl} \times (t - k_{jl}))}
+$$
+
+where $c_j$, $h_j$ and $g_j$ are pulled towards the cluster mean and $k_j$ has its own mean for country $j$. The b-parameter in equation (1) has the form $b_j= b_{China} + \beta_j \times \sigma_b$.\
+Thus, the prior distributions of all model parameters are the following
 
 \begin{gather*}
 
-y_{jt} \sim Lognormal(\mu_{jt},\sigma_{jt})\\
+\sigma_{jt} \sim Normal^+(0,10)\\
 
-\mu_{jt}=a_j \text{ } exp ({-b_j \text{ } exp({-c_j\text{ } \times\text{ } t}}))\\
+a_j \sim Normal^+(11,5)\\
 
-\sigma_{jt} \sim studentT (5,0,1.5)\\
+b_{China} \sim Normal^+(5,10)\\
 
-a_j \sim Normal^+(a_{intercept},\sigma_a)\\
-
-b_j \sim Normal(b_{intercept},\sigma_b)\\
-
-c_j \sim Normal(c_{intercept}+ \beta_{lockdown} \times \sigma_{lockdown}+\beta_{density} \times \sigma_{density} + \beta_{tests} \times \sigma_{tests} + \beta_{Density:tests} \times \sigma_{Density:tests},\sigma_c)\\
-
-a_{intercept} \sim Gamma(3,0.5)\\
-
-b_{intercept} \sim Normal^+(5,10)\\
-
-c_{intercept} \sim Normal^+(0.1,0.5)\\
-
-\sigma_a \sim Cauchy^+(0,10)\\
+\beta_j \sim Normal^+(0,1)\\
 
 \sigma_b \sim Cauchy^+(0,25)\\
 
-\sigma_c \sim Cauchy^+(0,1)\\
+c_{jl} \sim Normal(\gamma_l,\sigma_c)\\
 
-\beta_{lockdown}\sim Normal(0,\sigma_{lockdown})\\
+h_{jl} \sim Normal(\theta_l,\sigma_c)\\
 
-\beta_{density}\sim Normal(0,\sigma_{density})\\
+g_{jl} \sim Normal(\alpha_l,\sigma_c)\\
 
-\beta_{tests}\sim Normal(0,\sigma_{tests})\\
+k_{jl} \sim Normal(70,70)\\
 
-\beta_{Density:tests}\sim Normal(0,\sigma_{Density:tests})\\
+\gamma_l \sim Normal^+(0,1)\\
 
-\sigma_{lockdown}\sim Cauchy^+(0,10)\\
+\theta_l \sim Normal^+(0,10)\\
 
-\sigma_{density}\sim Cauchy^+(0,30)\\
-
-\sigma_{tests}\sim Cauchy^+(0,20)\\
-
-\sigma_{Density:tests})\sim Cauchy^+(0,50)\\
+\alpha_l \sim Normal^+(0,0.5)\\
 
 \end{gather*}
+
+where $j=1,...,J$ represents the country, $l=1,...,L$ represents the cluster for country $j$. The hierarchical structure is introduced through $c_{jl}$, $h_{jl}$ and $g_{jl}$, i.e., country $j$ shares information with the cluster through $\gamma_l$,$\theta_l$ and $\alpha_l$. It is interesting to recover $P(\gamma_l \mid y)$ to analyze the efficiency of similar decisions at group level. 

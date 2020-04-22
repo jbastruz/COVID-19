@@ -10,30 +10,38 @@ Packages=c("rstanarm","actuar","rstan","dplyr","lubridate","readxl","ggplot2",
 
 lapply(Packages,library,character.only=TRUE)
 
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+Sys.setenv(LOCAL_CPPFLAGS = '-march=corei7')
 
-plotList <- function(A) {
+plotListInit <- function(A, B) {
   lapply(seq_len(A), function(x) {
     
-    fig <- plot_ly(plotdata[plotdata$Country.Region == Country[x],], x = ~day, color = ~I("black"), name = Country[x]) 
-    fig <- fig %>% add_markers(y = ~ConfirmedCases, text = rownames(plotdata[plotdata$Country.Region == Country[x],]), showlegend = FALSE)
-    fig <- fig %>% add_text(x = 40, y = max(plotdata[plotdata$Country.Region == Country[x],]$Y_pred_cred_0.975), text = ~unique(Country[x]), color = I("black"))
+    fig <- plot_ly(B[B$Country.Region == Country[x],], x = ~day, color = ~I("rgba(7, 164, 181, 1)"), name = Country[x]) 
+    fig <- fig %>% add_markers(y = ~cumcases, text = rownames(B[B$Country.Region == Country[x],]), showlegend = FALSE)
+    fig <- fig %>% add_text(x = 40, y = 1.1*max(1,1*B[B$Country.Region == Country[x],]$cumcases), text = ~unique(Country[x]), color = I("black"))
+    fig <- fig %>% layout(showlegend = FALSE, title = "DataViz For Gross Data (Confirmed Cases)", xaxis = list(showgrid = FALSE), yaxis = list(showgrid = FALSE))
+  }
+  )}
+
+plotList <- function(A, B) {
+  lapply(seq_len(A), function(x) {
+    
+    fig <- plot_ly(B[B$Country.Region == Country[x],], x = ~day, color = ~I("black"), name = Country[x]) 
+    fig <- fig %>% add_markers(y = ~cumcases, text = rownames(B[B$Country.Region == Country[x],]), showlegend = FALSE)
+    fig <- fig %>% add_text(x = 40, y = max(B[B$Country.Region == Country[x],]$Y_pred_cred_0.975), text = ~unique(Country[x]), color = I("black"))
     fig <- fig %>% add_lines(y = ~Y_pred_median,
                              line = list(color = 'rgba(7, 164, 181, 1)'))
-    fig <- fig %>% add_ribbons(data = plotdata[plotdata$Country.Region == Country[x],],
+    fig <- fig %>% add_ribbons(data = B[B$Country.Region == Country[x],],
                                ymin = ~Y_pred_cred_0.025,
                                ymax = ~Y_pred_cred_0.975,
                                line = list(color = 'rgba(7, 164, 181, 0.05)'),
                                fillcolor = 'rgba(7, 164, 181, 0.2)')
     
-    fig <- fig %>% layout(showlegend = FALSE, title = "Estimation of the evolution of the Sars-Cov-2", xaxis = list(showgrid = FALSE), yaxis = list(showgrid = FALSE))
+    fig <- fig %>% layout(showlegend = FALSE, xaxis = list(showgrid = FALSE), yaxis = list(showgrid = FALSE))
   }
 )}
 
-options(shiny.maxRequestSize=40*1024^2) 
-
-options(mc.cores = parallel::detectCores())
-rstan_options(auto_write = TRUE)
-Sys.setenv(LOCAL_CPPFLAGS = '-march=corei7')
 
 theme.1 <- theme(axis.line = element_line(size = 3, colour = "grey80"), 
                  axis.text = element_text(size=12),
@@ -131,7 +139,7 @@ plotDevBananas <- function(x, data,
   
 }
 
-createPlotData <- function(stanfit, data, probs=c(0.025, 0.975)){
+createB <- function(stanfit, data, probs=c(0.025, 0.975)){
   
   post <- as.matrix(rstan::extract(stanfit, pars=c("yrep","yproj"),inc_warmup=FALSE))
   ppc_summary <- cbind(

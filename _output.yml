@@ -3,7 +3,7 @@ bookdown::gitbook:
   config:
     toc:
       before: |
-        <li><a href="./"><CENTER>COVID 19 - Bayesian Modeling</CENTER></a></li>
+        <li><a href="./"><CENTER>Modeling the COVID-19 spread</CENTER></a></li>
       after: |
         <li><CENTER>Written by <br>
         Juan Ignacio de Oyarbide & <br>
