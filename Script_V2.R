@@ -68,9 +68,17 @@ db_level_1 <- confirmedcases_counts %>%
   group_by(Country.Region,day) %>% 
   summarize(cumcases= sum(cumcases)) %>%  
   filter(Country.Region %in% c("US","France","United Kingdom","Turkey","Iran",
-                               "China","South Korea","Vietnam","Iceland","Argentina","Australia","New Zealand"
-  )
-  )
+                                "Italy","Germany","Finland","Switzerland","Portugal","Denmark","Norway","Austria","Luxembourg",
+                                "Russia","Sweden","Spain","Indonesia","Belgium","Canada","Netherlands",
+                                "China","South Korea","Vietnam","Iceland","Argentina","Australia","New Zealand",
+                                "Brazil","India","Peru","Singapore","United Arab Emirates","Chile")
+   )
+
+  #                              "Argentina","China","Italy","Germany","Finland","Switzerland","Portugal","Denmark","Norway","Austria","Luxembourg",
+  #                              "Russia","Sweden","Spain","Indonesia","Belgium","Canada","Netherlands",
+  #                              "South Korea","Vietnam","Iceland","Australia","New Zealand",
+  #                              "Brazil","India","Peru","Singapore","United Arab Emirates","Chile")
+  # )
 
 #"India","South Korea","Taiwan*","Canada","Mexico","Chile","Uruguay","Brazil","Argentina","Luxembourg","Austria","Russia","Portugal",
 # c("China",
@@ -85,23 +93,20 @@ db_level_1 <- confirmedcases_counts %>%
 
 
 db_level_1$Country.Region <- as.factor(db_level_1$Country.Region)
-db_level_1$Country.Region <- relevel(db_level_1$Country.Region,"China")
+db_level_1$Country.Region <- relevel(db_level_1$Country.Region,"Italy")
 
+
+tmp_2 <- countryinfo %>%
+  filter(Country.Region %in% c("US","France","United Kingdom","Turkey","Iran",
+                               "Italy","Germany","Finland","Switzerland","Portugal","Denmark","Norway","Austria","Luxembourg",
+                               "Russia","Sweden","Spain","Indonesia","Belgium","Canada","Netherlands",
+                               "China","South Korea","Vietnam","Iceland","Argentina","Australia","New Zealand",
+                               "Brazil","India","Peru","Singapore","United Arab Emirates","Chile")
+  )
 
 # tmp_2 <- countryinfo %>% 
-#   filter(Country.Region %in% c("US","France","United Kingdom","Turkey","Iran",
-#                                "Italy","Germany","Finland","Switzerland","Portugal","Denmark","Norway","Austria","Luxembourg",
-#                                "Russia","Sweden","Spain","Indonesia","Belgium","Canada","Netherlands",
-#                                "China","South Korea","Vietnam","Iceland","Argentina","Australia","New Zealand",
-#                                "Brazil","India","Peru","Singapore","United Arab Emirates","Chile"
+#   filter(Country.Region %in% c("France","United Kingdom","Italy","Germany","US","China")
 #   )
-#   )
-
-tmp_2 <- countryinfo %>% 
-  filter(Country.Region %in% c("US","France","United Kingdom","Turkey","Iran",
-                               "China","South Korea","Vietnam","Iceland","Argentina","Australia","New Zealand"
-  )
-  )
 
 ordered_names <- data.frame(expand.grid(levels(db_level_1$Country.Region)))
 colnames(ordered_names) <- "Country.Region"
@@ -112,10 +117,10 @@ db_level_2 <- left_join(db_level_2,tmp[,c(1,21)])
 
 db_level_2$Group <- NA
 
-db_level_2[db_level_2$Country.Region %in% c("US","France","United Kingdom","Turkey","Iran"),"Group"] <- 1
-db_level_2[db_level_2$Country.Region %in% c("Italy","Germany","Finland","Switzerland","Portugal","Denmark","Norway","Austria","Luxembourg"),"Group"] <- 2
+db_level_2[db_level_2$Country.Region %in% c("France","United Kingdom","Turkey","Iran","US"),"Group"] <- 1
+db_level_2[db_level_2$Country.Region %in% c("Argentina","China","Italy","Germany","Finland","Switzerland","Portugal","Denmark","Norway","Austria","Luxembourg"),"Group"] <- 2
 db_level_2[db_level_2$Country.Region %in% c("Russia","Sweden","Spain","Indonesia","Belgium","Canada","Netherlands"),"Group"] <- 3
-db_level_2[db_level_2$Country.Region %in% c("China","South Korea","Vietnam","Iceland","Argentina","Australia","New Zealand"),"Group"] <- 4
+db_level_2[db_level_2$Country.Region %in% c("South Korea","Vietnam","Iceland","Australia","New Zealand"),"Group"] <- 4
 db_level_2[db_level_2$Country.Region %in% c("Brazil","India","Peru","Singapore","United Arab Emirates","Chile"),"Group"] <- 5
 
 ndaysproj=10
@@ -128,6 +133,8 @@ design_matrix_1 <- model.matrix(~-1+Country.Region,db_level_1);colnames(design_m
 design_matrix_2 <- model.matrix(~-1+as.factor(Group),db_level_2);colnames(design_matrix_2);dim(design_matrix_2)
 
 design_matrix_b <- model.matrix(~-1+Country.Region,db_level_1)[,-1];colnames(design_matrix_b);dim(design_matrix_b)
+
+design_matrix_c <- model.matrix(~-1+as.factor(day):Country.Region,db_level_1);colnames(design_matrix_c);dim(design_matrix_c)
 
 design_matrix_proj <- model.matrix(~-1+Country.Region,yproj);colnames(design_matrix_proj);dim(design_matrix_proj)
 
@@ -152,9 +159,11 @@ stan_list <- list("y"=db_level_1$cumcases,
                   "N"=length(db_level_1$cumcases),
                   "J"=dim(design_matrix_1)[2],
                   "L"=dim(design_matrix_2)[2],
+                  "C"=dim(design_matrix_c)[2],
                   "design_matrix_1"=design_matrix_1,
                   "design_matrix_2"=design_matrix_2,
                   "design_matrix_b"=design_matrix_b,
+                  "design_matrix_c"=design_matrix_c,
                   "design_matrix_proj"=design_matrix_proj,
                   "design_matrix_b_proj"=design_matrix_b_proj,
                   "M"=length(yproj$Country.Region),
@@ -171,7 +180,7 @@ stan_fit<- stan(
 )
 
 
-traceplot(stan_fit,pars=c("c_intercept","c_a","c_b","c_h"))
+traceplot(stan_fit,pars=c("a_j","b_j","c_country","c_cluster"))
 
 pairs(stan_fit,pars=c("a_intercept","c_intercept","beta_c"))
 
@@ -209,16 +218,56 @@ plotdata <- data.frame(Country.Region=c(as.character(db_level_1$Country.Region),
                        Y_pred_cred_0.975=round(ppc_summary$Y_pred_cred_0.975),0)
 write.csv(plotdata,file="plotdata.csv")
 
-c2 = data.frame(rstan::extract(stan_fit,par = "c_2"))
-a = data.frame(rstan::extract(stan_fit,par = "a"))
-g1 = mcmc_combo(c2)
-g2 = mcmc_intervals(a)
-
 ppc_intervals_grouped(y=c(db_level_1$cumcases,ppc_summary_yproj$Y_pred_median),
                       yrep=cbind(post$yrep,post$yproj),
                       x=c(db_level_1$day,yproj$day),
                       group=c(as.character(db_level_1$Country.Region),as.character(yproj$Country.Region)))+
   ggplot2::geom_vline(xintercept=85,linetype="dashed")
+
+
+
+post_2 <- rstan::extract(stan_fit,pars = c("c_index","c_index_proj"),
+                       inc_warmup=FALSE)
+
+ppc_summary_c <- data.frame(cbind(
+  median=apply(post_2$c_index, 2, median),
+  t(apply(post_2$c_index, 2, quantile, probs=c(0.025, 0.975)))
+))
+
+colnames(ppc_summary_c) = 
+  c("C_pred_median","C_pred_cred_0.025","C_pred_cred_0.975")
+
+ppc_summary_c$model <- "C"
+
+ppc_summary_c_proj <- data.frame(cbind(
+  median=apply(post_2$c_index_proj, 2, median),
+  t(apply(post_2$c_index_proj, 2, quantile, probs=c(0.025, 0.975)))
+))
+
+colnames(ppc_summary_c_proj) = 
+  c("C_pred_median","C_pred_cred_0.025","C_pred_cred_0.975")
+
+ppc_summary_c_proj$model <- "Cproj"
+
+ppc_summary_2 <- rbind(ppc_summary_c,ppc_summary_c_proj)
+
+plotdata_2 <- data.frame(Country.Region=c(as.character(db_level_1$Country.Region),as.character(yproj$Country.Region)),
+                       day=c(db_level_1$day,yproj$day),
+                       C_pred_median=round(ppc_summary_2$C_pred_median,5),
+                       C_pred_cred_0.025=round(ppc_summary_2$C_pred_cred_0.025,5),
+                       C_pred_cred_0.975=round(ppc_summary_2$C_pred_cred_0.975),5)
+write.csv(plotdata_2,file="plotdata_2.csv")
+
+c2 = data.frame(rstan::extract(stan_fit,par = "c_2"))
+a = data.frame(rstan::extract(stan_fit,par = "a"))
+g1 = mcmc_combo(c2)
+g2 = mcmc_intervals(a)
+
+ppc_intervals_grouped(y=c(rep(0,length(db_level_1$cumcases)),rep(0,length(ppc_summary_yproj$Y_pred_median))),
+                      yrep=cbind(post_2$c_index,post_2$c_index_proj),
+                      x=c(db_level_1$day,yproj$day),
+                      group=c(as.character(db_level_1$Country.Region),as.character(yproj$Country.Region)))+
+  ggplot2::geom_vline(xintercept=91,linetype="dashed")
 
 A=300000
 b=10
